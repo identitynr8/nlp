@@ -33,6 +33,11 @@ class URLpair(models.Model):
         url = original_url
         buzzwords_to_use = []
         while True:
+            # check if original URL is already been buzzified
+            pair = cls.objects.filter(original_url=original_url).first()
+            if pair is not None:
+                return pair
+
             # add one more quoted buzzword to a list of buzzwords to use in url
             buzzword_ix = hash(url) % len(BUZZWORDS['en'])
             buzzwords_to_use.append(ul.parse.quote(BUZZWORDS['en'][buzzword_ix]))
