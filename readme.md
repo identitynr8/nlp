@@ -15,7 +15,7 @@ python manage.py runserver --settings project.settings.dev.settings
 ```
 
 The project is not deployed anywhere now, but here are pictures of it's former glory:
-[Buzzmeter](pics/buzzmeter.png)
-[Sentiments meter](pics/sentiment_meter.png)
-[Buzzifier](pics/buzzifier.png)
+![Buzzmeter](pics/buzzmeter.png)
+![Sentiments meter](pics/sentiment_meter.png)
+![Buzzifier](pics/buzzifier.png)
  
