@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block custom_js %}
+  <script>
+    function get_sentiment_score() {
+      $.ajax({
+        type: "POST",
+        url: "{% url 'api-sentiment' %}",
+        data: {'language': 'en', 'text': $("#text_sample").val()},
+        success: show_sentiment_score,
+        error: show_error,
+        dataType: 'json'
+      });
+    }
+
+    function show_sentiment_score(data, status, jqXHR) {
+      var score = data.compound;
+      score = score.toFixed(2);
+
+      var human = 'neutral';
+      if (score <= -0.5) human = 'negative';
+      if (score >= 0.5) human = 'positive';
+
+      $("#score").text('Sentiment score is ' + score + ' The text is ' + human + '.');
+    }
+
+    function show_error(data, status, jqXHR) {
+      $("#score").text(data.responseJSON.text);
+    }
+
+  </script>
+{% endblock custom_js %}
+
+{% block content %}
+  <div class="container">
+
+    <div class="header">
+      <h1 class="title">Sentiment meter</h1>
+      <p class="lead description">Find out text's sentiment.</p>
+    </div>
+
+    <div class="row">
+
+      <div class="col-sm-8 main">
+
+        <div class="post">
+          <h2 class="post-title">Paste your text here</h2>
+          English, please...
+          <textarea class="form-control" id="text_sample" rows="10"></textarea>
+          <button type="button" class="btn btn-info pull-right" onclick="get_sentiment_score();">Measure sentiment
+          </button>
+          <div><p id="score"></p></div>
+        </div>
+
+      </div>
+
+      <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+        <div class="sidebar-module sidebar-module-inset">
+          <h4>About</h4>
+          <p>Sentiment meter uses <a href="https://github.com/cjhutto/vaderSentiment">VADER</a> tool,
+            specifically attuned to sentiments expressed in social media.</p>
+          <p>Compound sentiment score ranges between -1 (most extreme negative) and +1 (most extreme positive).</p>
+          <p>Text considered to be neutral if compound score lies between -0.5 and 0.5.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+{% endblock content %}

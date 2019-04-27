@@ -1,0 +1,7 @@
+Django==2.2
+
+djangorestframework==3.9.2
+django-rest-swagger==2.2.0
+
+nltk==3.4.1
+vaderSentiment==3.2.1

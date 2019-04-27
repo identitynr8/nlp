@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block custom_js %}
+  <script>
+    function get_buzzified_url() {
+      $.ajax({
+        type: "POST",
+        url: "{% url 'api-buzzifier' %}",
+        data: {'url': $("#url_sample").val()},
+        success: show_url,
+        error: show_error,
+        dataType: 'json'
+      });
+    }
+
+    function show_url(data, status, jqXHR) {
+      var url = data.buzzified_url;
+      $("#buzzified_url").text('Your buzzified URL is ' + url);
+    }
+
+    function show_error(data, status, jqXHR) {
+      $("#buzzified_url").text(data.responseJSON.url);
+    }
+  </script>
+{% endblock custom_js %}
+
+{% block content %}
+  <div class="container">
+
+    <div class="header">
+      <h1 class="title">URLs buzzifier</h1>
+      <p class="lead description">Buzzify your URLs. Make them epic.</p>
+    </div>
+
+    <h4>Paste your URL here</h4>
+    <div class="col-sm-8 main">
+      <input class="form-control" id="url_sample"/>
+      <p id="buzzified_url" class="text-nowrap"></p>
+    </div>
+    <div class="col-sm-1">
+      <button type="button" class="btn btn-info pull-right" onclick="get_buzzified_url();">Buzzify</button>
+    </div>
+  </div>
+
+{% endblock content %}

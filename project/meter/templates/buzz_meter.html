@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block custom_js %}
+  <script src="{% static "js/raphael-2.1.4.min.js" %}"></script>
+  <script src="{% static "js/justgage.js" %}"></script>
+
+  <script>
+    function get_buzz_score() {
+      $.ajax({
+        type: "POST",
+        url: "{% url 'api-buzzmeter' %}",
+        data: {'language': 'en', 'text': $("#text_sample").val()},
+        success: show_buzz_score,
+        error: show_error,
+        dataType: 'json'
+      });
+    }
+
+    function show_buzz_score(data, status, jqXHR) {
+      var score = data.score * 100;
+      score = score.toFixed(2);
+
+      buzz_gauge.refresh(score);
+
+      $("#score").text('Buzz score is ' + score + '%');
+
+      if (score > 0) {
+        $("#buzz_info").show();
+        $("#buzz_words").text(data["buzz words"].join(', '));
+      } else {
+        $("#buzz_info").hide();
+      }
+    }
+
+    function show_error(data, status, jqXHR) {
+      $("#score").text(data.responseJSON.text);
+    }
+
+    $(document).ready(function () {
+      buzz_gauge = new JustGage({
+        id: "gauge",
+        value: 0,
+        title: "Buzz score"
+      });
+    });
+  </script>
+{% endblock custom_js %}
+
+{% block content %}
+  <div class="container">
+
+    <div class="header">
+      <h1 class="title">Buzzmeter</h1>
+      <p class="lead description">Find out buzz score of your CV / job description / marketing text / promotion material
+        etc.</p>
+    </div>
+
+    <div class="row">
+
+      <div class="col-sm-8 main">
+
+        <div class="post">
+          <h2 class="post-title">Paste your text here</h2>
+          English, please...
+          <textarea class="form-control" id="text_sample" rows="10"></textarea>
+          <button type="button" class="btn btn-info pull-right" onclick="get_buzz_score();">Get the buzz score</button>
+          <div><p id="score"></p></div>
+          <div id="buzz_info" style="display: none">
+            <p>Buzz words:</p>
+            <blockquote id="buzz_words"></blockquote>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+        <div class="sidebar-module sidebar-module-inset">
+          <h4>About</h4>
+          <p>Buzzmeter is finely tuned by our linguistic committee to work with marketing / promotions materials.</p>
+          <p>Don't hesitate though to use it for other types of texts.</p>
+          <p>By the way, buzz score of this note is 5%</p>
+        </div>
+        <div class="sidebar-module">
+          <div id="gauge"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+{% endblock content %}
